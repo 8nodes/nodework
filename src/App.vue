@@ -1,26 +1,44 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="form">
+    <addItem @reloadlist="reloadList" />
+    <ItemView :todos="todos" @reloadlist="reloadList" />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios';
+import addItem from './components/addItem.vue';
+import ItemView from './components/itemView.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
-}
-</script>
+    addItem,
+    ItemView,
+  },
+  data() {
+    return {
+      todos: [],
+    };
+  },
+  methods: {
+    getTodos() {
+      axios.get('http://localhost:3001/todo')
+        .then(response => {
+          this.todos = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    reloadList() {
+      this.getTodos();
+    },
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+  },
+
+  created() {
+    this.getTodos();
+  },
+};
+</script>
